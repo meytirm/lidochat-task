@@ -52,7 +52,7 @@ export const store = createStore<State>({
         console.log(e)
       }
     },
-    setUserStateData() {
+    getUserData(context) {
 
     },
     setToken(context, { accessToken, refreshToken }: { accessToken: string, refreshToken: string }) {
