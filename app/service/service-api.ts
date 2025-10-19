@@ -17,6 +17,7 @@ export class ServiceApi {
   private setupInterceptor(instance: AxiosInstance) {
     instance.interceptors.request.use(
       (config) => {
+        config.headers['Authorization'] = 'Bearer'
         return config
       },
       (error) => {
