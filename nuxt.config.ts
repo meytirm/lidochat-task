@@ -6,7 +6,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     apiKey: '',
     public: {
-      apiBase: '',
+      clientApiBase: '',
+      serverApiBase: '',
     },
   },
   compatibilityDate: '2025-07-15',
