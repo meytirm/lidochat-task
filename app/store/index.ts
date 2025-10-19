@@ -1,9 +1,13 @@
 import { createStore } from 'vuex'
 import type { UserStateData } from '~~/types/store'
+import { AuthService } from '~/service/auth'
+import type { SignInPayload } from '~~/types/service'
 
 export interface State {
   user: null | UserStateData
 }
+const { $api } = useNuxtApp()
+const authService = new AuthService($api)
 
 export const store = createStore<State>({
   state: () => ({ user: null }),
@@ -19,14 +23,32 @@ export const store = createStore<State>({
     },
   },
   actions: {
-    signIn() {
-
+    async signIn(context, payload: SignInPayload) {
+      try {
+        const res = await authService.signIn(payload)
+        const userData = res.data
+        const { registered, ...rest } = userData
+        context.commit('setUser', rest)
+        await context.dispatch('setToken', {
+          accessToken: userData.idToken,
+          refreshToken: userData.refreshToken,
+        })
+      }
+      catch (e) {
+        console.log(e)
+      }
     },
     signUp() {
 
     },
     setUserStateData() {
 
+    },
+    setToken(context, { accessToken, refreshToken }: { accessToken: string, refreshToken: string }) {
+      const accessTokenCookie = useCookie('accessToken')
+      const refreshTokenCookie = useCookie('refreshToken')
+      accessTokenCookie.value = accessToken
+      refreshTokenCookie.value = refreshToken
     },
   },
 })
