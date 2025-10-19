@@ -7,5 +7,5 @@ export interface FirebaseAuthResponse {
   registered: boolean
 }
 
-export type FirebaseLoginResponse = FirebaseAuthResponse
+export type FirebaseSignInResponse = FirebaseAuthResponse
 export type FirebaseSignupResponse = Omit<FirebaseAuthResponse, 'registered'>
