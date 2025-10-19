@@ -8,7 +8,15 @@
 const { $api } = useNuxtApp()
 const config = useRuntimeConfig()
 const fetchData = async () => {
-  const res = await $api.post(`accounts:signInWithCustomToken?key=`)
+  // const res = await $api.post(`accounts:signInWithCustomToken?key=`)
+  const res = await $fetch('/api/firebase-login', {
+    method: 'POST',
+    body: {
+      email: 'test@test.com',
+      password: 'testtesttest',
+      returnSecureToken: true,
+    },
+  })
   console.log(res)
 }
 
