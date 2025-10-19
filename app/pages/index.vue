@@ -5,18 +5,20 @@
 </template>
 
 <script setup lang="ts">
+import { AuthService } from '~/service/auth'
+
 const { $api } = useNuxtApp()
-const config = useRuntimeConfig()
+const authService = new AuthService($api)
 const fetchData = async () => {
-  // const res = await $api.post(`accounts:signInWithCustomToken?key=`)
-  const res = await $fetch('/api/firebase-login', {
-    method: 'POST',
-    body: {
-      email: 'test@test.com',
-      password: 'testtesttest',
-      returnSecureToken: true,
-    },
-  })
+  const res = await authService.signIn()
+  // const res = await $fetch('/api/firebase-login', {
+  //   method: 'POST',
+  //   body: {
+  //     email: 'test@test.com',
+  //     password: 'testtesttest',
+  //     returnSecureToken: true,
+  //   },
+  // })
   console.log(res)
 }
 
