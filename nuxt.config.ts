@@ -4,6 +4,9 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   css: ['bootstrap/dist/css/bootstrap.min.css'],
   compatibilityDate: '2025-07-15',
+  typescript: {
+    typeCheck: true,
+  },
   eslint: {
     config: {
       stylistic: {
