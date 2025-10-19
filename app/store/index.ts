@@ -1,7 +1,7 @@
 import { createStore } from 'vuex'
 import type { UserStateData } from '~~/types/store'
 import { AuthService } from '~/service/auth'
-import type { SignInPayload } from '~~/types/service'
+import type { SignInPayload, SignUpPayload } from '~~/types/service'
 
 export interface State {
   user: null | UserStateData
@@ -38,8 +38,19 @@ export const store = createStore<State>({
         console.log(e)
       }
     },
-    signUp() {
-
+    async signUp(context, payload: SignUpPayload) {
+      try {
+        const res = await authService.signUp(payload)
+        const userData = res.data
+        context.commit('setUser', userData)
+        await context.dispatch('setToken', {
+          accessToken: userData.idToken,
+          refreshToken: userData.refreshToken,
+        })
+      }
+      catch (e) {
+        console.log(e)
+      }
     },
     setUserStateData() {
 
