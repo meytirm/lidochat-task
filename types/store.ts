@@ -1,3 +1,3 @@
-import type { FirebaseAuthResponse } from './firebase'
+import type { FirebaseUserResponse } from './firebase'
 
-export type UserStateData = Omit<FirebaseAuthResponse, 'registered'>
+export type UserStateData = FirebaseUserResponse
