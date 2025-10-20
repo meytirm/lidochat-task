@@ -4,7 +4,6 @@
       class="d-flex justify-content-center mb-4"
       to="/"
     >dashboard</NuxtLink>
-    {{ v$.email.$errors.length }}
     <BCard>
       <div class="d-flex justify-content-center">
         {{ props.authType === 'sign-in' ? 'Sign In' : 'Sign Up' }}
@@ -24,7 +23,13 @@
             v-model="authForm.email"
             type="email"
             placeholder="Email address"
+            :state="v$.email.$errors.length > 0 ? false : null"
           />
+          <BFormInvalidFeedback
+            :state="false"
+          >
+            {{ v$.email.$errors[0]?.$message }}
+          </BFormInvalidFeedback>
         </BFormFloatingLabel>
         <BFormFloatingLabel
           label="Password"
@@ -36,7 +41,13 @@
             v-model="authForm.password"
             type="password"
             placeholder="Password"
+            :state="v$.password.$errors.length > 0 ? false : null"
           />
+          <BFormInvalidFeedback
+            :state="false"
+          >
+            {{ v$.password.$errors[0]?.$message }}
+          </BFormInvalidFeedback>
         </BFormFloatingLabel>
         <BFormFloatingLabel
           v-if="props.authType === 'sign-up'"
@@ -49,7 +60,13 @@
             v-model="authForm.confirmPassword"
             type="password"
             placeholder="Confirm Password"
+            :state="v$.confirmPassword.$errors.length > 0 ? false : null"
           />
+          <BFormInvalidFeedback
+            :state="false"
+          >
+            {{ v$.confirmPassword.$errors[0]?.$message }}
+          </BFormInvalidFeedback>
         </BFormFloatingLabel>
         <div class="fs-6 my-4">
           <NuxtLink
@@ -102,7 +119,7 @@ const rules = () => {
   return { ...baseRules, confirmPassword: { required, sameAs: sameAs(authForm.password) } }
 }
 
-const v$ = useVuelidate(rules(), authForm)
+const v$ = useVuelidate(rules, authForm, { $autoDirty: true })
 
 async function submitForm() {
   const isFormCorrect = await v$.value.$validate()
