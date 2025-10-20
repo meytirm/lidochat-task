@@ -1,24 +1,24 @@
 import { createStore } from 'vuex'
 import type { UserStateData } from '~~/types/store'
-import { AuthService } from '~/service/auth'
+import type { AuthService } from '~/service/auth'
 import type { SignInPayload, SignUpPayload } from '~~/types/service'
-import { UserService } from '~/service/user'
+import type { UserService } from '~/service/user'
 import type { FirebaseUserResponse } from '~~/types/firebase'
+
+import { useCookie } from '#app'
 
 export interface State {
   user: null | FirebaseUserResponse
 }
-const { $api } = useNuxtApp()
-const authService = new AuthService($api)
-const userService = new UserService($api)
 
-export const store = createStore<State>({
+export const makeStore = (authService: AuthService, userService: UserService) => createStore<State>({
   state: () => ({ user: null }),
   getters: {
     isLoggedIn: (state: State) => !!state.user,
   },
   mutations: {
     setUser(state: State, user: UserStateData) {
+      console.log(state, user)
       state.user = user
     },
     clearUser(state: State) {
@@ -58,7 +58,7 @@ export const store = createStore<State>({
     async getUserData(context, idToken: string) {
       try {
         const res = await userService.getData(idToken)
-        const userData = res.data
+        const userData = res.data.users
         context.commit('setUser', userData[0])
       }
       catch (e) {
