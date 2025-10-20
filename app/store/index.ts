@@ -2,12 +2,15 @@ import { createStore } from 'vuex'
 import type { UserStateData } from '~~/types/store'
 import { AuthService } from '~/service/auth'
 import type { SignInPayload, SignUpPayload } from '~~/types/service'
+import { UserService } from '~/service/user'
+import type { FirebaseUserResponse } from '~~/types/firebase'
 
 export interface State {
-  user: null | UserStateData
+  user: null | FirebaseUserResponse
 }
 const { $api } = useNuxtApp()
 const authService = new AuthService($api)
+const userService = new UserService($api)
 
 export const store = createStore<State>({
   state: () => ({ user: null }),
@@ -52,8 +55,15 @@ export const store = createStore<State>({
         console.log(e)
       }
     },
-    getUserData(context) {
-
+    async getUserData(context, idToken: string) {
+      try {
+        const res = await userService.getData(idToken)
+        const userData = res.data
+        context.commit('setUser', userData[0])
+      }
+      catch (e) {
+        console.log(e)
+      }
     },
     setToken(context, { accessToken, refreshToken }: { accessToken: string, refreshToken: string }) {
       const accessTokenCookie = useCookie('accessToken')
