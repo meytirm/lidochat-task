@@ -2,8 +2,9 @@ import axios, { type AxiosInstance, type AxiosRequestConfig } from 'axios'
 
 export class ServiceApi {
   private readonly axiosInstance: AxiosInstance
-
-  constructor(baseUrl: string) {
+  private readonly getAccessToken: () => string | null | undefined
+  constructor(baseUrl: string, getAccessToken: () => string | null | undefined) {
+    this.getAccessToken = getAccessToken
     this.axiosInstance = axios.create({
       baseURL: baseUrl,
       headers: {
@@ -17,7 +18,8 @@ export class ServiceApi {
   private setupInterceptor(instance: AxiosInstance) {
     instance.interceptors.request.use(
       (config) => {
-        config.headers['Authorization'] = 'Bearer'
+        const accessToken = this.getAccessToken()
+        config.headers['Authorization'] = `Bearer ${accessToken}`
         return config
       },
       (error) => {
