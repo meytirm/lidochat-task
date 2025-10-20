@@ -6,7 +6,7 @@ export class UserService {
   constructor(private readonly api: ServiceApi) {
   }
 
-  getData(idToken: string): Promise<AxiosResponse<FirebaseUserResponse[]>> {
+  getData(idToken: string): Promise<AxiosResponse<{ users: FirebaseUserResponse[] }>> {
     return this.api.post('/api/firebase-user-data', { idToken })
   }
 }
