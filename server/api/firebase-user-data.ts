@@ -1,13 +1,12 @@
-import { ServiceApi } from '~/service/service-api'
+import axios from 'axios'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
   const config = useRuntimeConfig()
   const apiKey = config.apiKey
   const apiBase = config.public.serverApiBase
-  const apiService = new ServiceApi(apiBase)
 
-  const response = await apiService.post(`/accounts:lookup?key=${apiKey}`,
+  const response = await axios.post(`${apiBase}/accounts:lookup?key=${apiKey}`,
     body,
   )
   return response.data
