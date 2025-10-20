@@ -4,12 +4,16 @@
       class="d-flex justify-content-center mb-4"
       to="/"
     >dashboard</NuxtLink>
+    {{ v$.email.$errors.length }}
     <BCard>
       <div class="d-flex justify-content-center">
         {{ props.authType === 'sign-in' ? 'Sign In' : 'Sign Up' }}
       </div>
       <hr class="mb-4">
-      <BForm>
+      <BForm
+        novalidate
+        @submit.prevent="submitForm"
+      >
         <BFormFloatingLabel
           label="Email address"
           label-for="floatingEmail"
@@ -73,6 +77,9 @@
 </template>
 
 <script setup lang="ts">
+import { required, email, minLength, sameAs } from '@vuelidate/validators'
+import useVuelidate from '@vuelidate/core'
+
 const props = defineProps<{
   authType: 'sign-in' | 'sign-up'
 }>()
@@ -82,6 +89,24 @@ const authForm = reactive({
   password: '',
   confirmPassword: '',
 })
+
+const rules = () => {
+  const baseRules = {
+    email: { required, email },
+    password: { required, minLength: minLength(8) },
+  }
+
+  if (props.authType === 'sign-in') {
+    return baseRules
+  }
+  return { ...baseRules, confirmPassword: { required, sameAs: sameAs(authForm.password) } }
+}
+
+const v$ = useVuelidate(rules(), authForm)
+
+async function submitForm() {
+  const isFormCorrect = await v$.value.$validate()
+}
 </script>
 
 <style scoped>
