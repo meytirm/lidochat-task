@@ -1,6 +1,7 @@
 <template>
   <div>
-    hello world
+    <h1>Default Layout</h1>
+    <slot />
   </div>
 </template>
 
