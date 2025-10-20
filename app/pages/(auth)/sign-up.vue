@@ -1,10 +1,12 @@
 <template>
   <div>
-    sign up
+    <AuthForm auth-type="sign-up" />
   </div>
 </template>
 
 <script setup lang="ts">
+import AuthForm from '~/components/page/auth/AuthForm.vue'
+
 definePageMeta({
   layout: 'auth',
 })
