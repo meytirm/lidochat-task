@@ -96,14 +96,19 @@
 <script setup lang="ts">
 import { required, email, minLength, sameAs } from '@vuelidate/validators'
 import useVuelidate from '@vuelidate/core'
+import { useStore } from 'vuex'
+
+const store = useStore()
 
 const props = defineProps<{
   authType: 'sign-in' | 'sign-up'
 }>()
 
+const loading = ref(false)
+
 const authForm = reactive({
-  email: '',
-  password: '',
+  email: 'test@test.com',
+  password: 'testtesttest',
   confirmPassword: '',
 })
 
@@ -119,10 +124,45 @@ const rules = () => {
   return { ...baseRules, confirmPassword: { required, sameAs: sameAs(authForm.password) } }
 }
 
-const v$ = useVuelidate(rules, authForm, { $autoDirty: true })
+const rulesComputed = computed(() => rules())
+
+const v$ = useVuelidate(rulesComputed, authForm, { $autoDirty: true })
 
 async function submitForm() {
   const isFormCorrect = await v$.value.$validate()
+
+  if (isFormCorrect) {
+    loading.value = true
+    if (props.authType === 'sign-in') {
+      try {
+        await store.dispatch('signIn', {
+          email: authForm.email,
+          password: authForm.password,
+          returnSecureToken: true,
+        })
+      }
+      catch (e) {
+        console.log(e)
+      }
+      finally {
+        loading.value = false
+      }
+    }
+    else {
+      try {
+        await store.dispatch('signUp', {
+          email: authForm.email,
+          password: authForm.password,
+        })
+      }
+      catch (e) {
+        console.log(e)
+      }
+      finally {
+        loading.value = false
+      }
+    }
+  }
 }
 </script>
 
