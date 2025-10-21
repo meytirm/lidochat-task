@@ -1,18 +1,17 @@
 import { createStore } from 'vuex'
 import type { UserStateData } from '~~/types/store'
-import { AuthService } from '~/service/auth'
+import type { AuthService } from '~/service/auth'
 import type { SignInPayload, SignUpPayload } from '~~/types/service'
-import { UserService } from '~/service/user'
+import type { UserService } from '~/service/user'
 import type { FirebaseUserResponse } from '~~/types/firebase'
+
+import { useCookie } from '#app'
 
 export interface State {
   user: null | FirebaseUserResponse
 }
-const { $api } = useNuxtApp()
-const authService = new AuthService($api)
-const userService = new UserService($api)
 
-export const store = createStore<State>({
+export const makeStore = (authService: AuthService, userService: UserService) => createStore<State>({
   state: () => ({ user: null }),
   getters: {
     isLoggedIn: (state: State) => !!state.user,
@@ -27,19 +26,16 @@ export const store = createStore<State>({
   },
   actions: {
     async signIn(context, payload: SignInPayload) {
-      try {
-        const res = await authService.signIn(payload)
-        const userData = res.data
-        const { registered, ...rest } = userData
-        context.commit('setUser', rest)
-        await context.dispatch('setToken', {
-          accessToken: userData.idToken,
-          refreshToken: userData.refreshToken,
-        })
-      }
-      catch (e) {
-        console.log(e)
-      }
+      const res = await authService.signIn(payload)
+      const userData = res.data
+      const { registered, ...rest } = userData
+      context.commit('setUser', rest)
+      await context.dispatch('setToken', {
+        accessToken: userData.idToken,
+        refreshToken: userData.refreshToken,
+      })
+      const userInformation = await context.dispatch('getUserData', userData.idToken)
+      return userInformation
     },
     async signUp(context, payload: SignUpPayload) {
       try {
@@ -50,26 +46,31 @@ export const store = createStore<State>({
           accessToken: userData.idToken,
           refreshToken: userData.refreshToken,
         })
+        const userInformation = await context.dispatch('getUserData', userData.idToken)
+        return userInformation
       }
       catch (e) {
         console.log(e)
       }
     },
     async getUserData(context, idToken: string) {
-      try {
-        const res = await userService.getData(idToken)
-        const userData = res.data
-        context.commit('setUser', userData[0])
-      }
-      catch (e) {
-        console.log(e)
-      }
+      const res = await userService.getData(idToken)
+      const userData = res.data.users
+      context.commit('setUser', userData[0])
+      return userData[0]
     },
     setToken(context, { accessToken, refreshToken }: { accessToken: string, refreshToken: string }) {
       const accessTokenCookie = useCookie('accessToken')
       const refreshTokenCookie = useCookie('refreshToken')
       accessTokenCookie.value = accessToken
       refreshTokenCookie.value = refreshToken
+    },
+    signOut(context) {
+      const accessTokenCookie = useCookie('accessToken')
+      const refreshTokenCookie = useCookie('refreshToken')
+      accessTokenCookie.value = ''
+      refreshTokenCookie.value = ''
+      context.commit('clearUser')
     },
   },
 })
