@@ -54,6 +54,20 @@ async function signOut() {
     console.log(e)
   }
 }
+
+function checkExpirationTime() {
+  const expirationTime = useCookie('expirationTime').value
+  if (expirationTime) {
+    const expirationTimeNumber = +expirationTime
+    const timeLeft = expirationTimeNumber - Date.now()
+    if (timeLeft < 0) {
+      signOut()
+    }
+    else {
+      setTimeout(signOut, timeLeft)
+    }
+  }
+}
 onMounted(async () => {
   const userInformationStorage = localStorage.getItem('userInformation')
   if (userInformationStorage) {
@@ -67,6 +81,7 @@ onMounted(async () => {
       localStorage.setItem('userInformation', JSON.stringify(userData))
     }
   }
+  checkExpirationTime()
 })
 </script>
 
