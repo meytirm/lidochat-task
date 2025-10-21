@@ -85,6 +85,7 @@
         <BButton
           type="submit"
           variant="primary"
+          :loading="loading"
         >
           Submit
         </BButton>
@@ -99,6 +100,7 @@ import useVuelidate from '@vuelidate/core'
 import { useStore } from 'vuex'
 
 const store = useStore()
+const router = useRouter()
 
 const props = defineProps<{
   authType: 'sign-in' | 'sign-up'
@@ -140,6 +142,7 @@ async function submitForm() {
           password: authForm.password,
           returnSecureToken: true,
         })
+        await router.push('/')
       }
       catch (e) {
         console.log(e)
@@ -154,6 +157,7 @@ async function submitForm() {
           email: authForm.email,
           password: authForm.password,
         })
+        await router.push('/')
       }
       catch (e) {
         console.log(e)
