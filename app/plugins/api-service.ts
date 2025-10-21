@@ -1,6 +1,7 @@
 import { defineNuxtPlugin, useRuntimeConfig, useCookie } from '#app'
 import { ServiceApi } from '~/service/service-api'
 import type { ToastOptions } from '~~/types/toast'
+import { useToast } from 'bootstrap-vue-next'
 
 export default defineNuxtPlugin(() => {
   const config = useRuntimeConfig()
