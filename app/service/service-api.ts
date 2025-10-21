@@ -1,10 +1,12 @@
 import axios, { type AxiosInstance, type AxiosRequestConfig } from 'axios'
-import { useStore } from 'vuex'
+import type { ToastOptions } from '~~/types/toast'
 
 export class ServiceApi {
   private readonly axiosInstance: AxiosInstance
   private readonly getAccessToken: () => string | null | undefined
-  constructor(baseUrl: string, getAccessToken: () => string | null | undefined) {
+  private readonly toast: (options: ToastOptions) => void
+  constructor(baseUrl: string, getAccessToken: () => string | null | undefined, toast: (options: ToastOptions) => void) {
+    this.toast = toast
     this.getAccessToken = getAccessToken
     this.axiosInstance = axios.create({
       baseURL: baseUrl,
@@ -32,6 +34,11 @@ export class ServiceApi {
         return response
       },
       (error) => {
+        this.toast({
+          title: 'Error',
+          body: error.message,
+          variant: 'danger',
+        })
         return Promise.reject(error)
       },
     )
