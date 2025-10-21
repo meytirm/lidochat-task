@@ -109,8 +109,8 @@ const props = defineProps<{
 const loading = ref(false)
 
 const authForm = reactive({
-  email: 'test@test.com',
-  password: 'testtesttest',
+  email: '',
+  password: '',
   confirmPassword: '',
 })
 
@@ -137,11 +137,12 @@ async function submitForm() {
     loading.value = true
     if (props.authType === 'sign-in') {
       try {
-        await store.dispatch('signIn', {
+        const userInformation = await store.dispatch('signIn', {
           email: authForm.email,
           password: authForm.password,
           returnSecureToken: true,
         })
+        localStorage.setItem('userInformation', JSON.stringify(userInformation))
         await router.push('/')
       }
       catch (e) {
@@ -153,10 +154,11 @@ async function submitForm() {
     }
     else {
       try {
-        await store.dispatch('signUp', {
+        const userInformation = await store.dispatch('signUp', {
           email: authForm.email,
           password: authForm.password,
         })
+        localStorage.setItem('userInformation', JSON.stringify(userInformation))
         await router.push('/')
       }
       catch (e) {
