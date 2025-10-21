@@ -9,6 +9,7 @@ import AuthForm from '~/components/page/auth/AuthForm.vue'
 
 definePageMeta({
   layout: 'auth',
+  requiresGuest: true,
 })
 </script>
 
