@@ -1,10 +1,9 @@
 <template>
   <div>
-    <NuxtLink
-      class="d-flex justify-content-center mb-4"
-      to="/"
-    >dashboard</NuxtLink>
-    <BCard>
+    <BCard
+      bg-variant="light"
+      style="min-width: 400px;"
+    >
       <div class="d-flex justify-content-center">
         {{ props.authType === 'sign-in' ? 'Sign In' : 'Sign Up' }}
       </div>
