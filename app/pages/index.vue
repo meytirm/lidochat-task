@@ -26,7 +26,7 @@ definePageMeta({
 })
 
 const store = useStore()
-const userName = computed(() => store.state.user.email)
+const userName = computed(() => store.state.user?.email)
 </script>
 
 <style scoped>

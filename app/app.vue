@@ -1,5 +1,10 @@
 <template>
   <NuxtLayout>
-    <NuxtPage />
+    <BApp>
+      <NuxtPage />
+    </BApp>
   </NuxtLayout>
 </template>
+
+<script setup lang="ts">
+</script>
