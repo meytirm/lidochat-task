@@ -18,7 +18,6 @@ export const makeStore = (authService: AuthService, userService: UserService) =>
   },
   mutations: {
     setUser(state: State, user: UserStateData) {
-      console.log(state, user)
       state.user = user
     },
     clearUser(state: State) {
@@ -35,8 +34,8 @@ export const makeStore = (authService: AuthService, userService: UserService) =>
         accessToken: userData.idToken,
         refreshToken: userData.refreshToken,
       })
-      await context.dispatch('getUserData', userData.idToken)
-      return res
+      const userInformation = await context.dispatch('getUserData', userData.idToken)
+      return userInformation
     },
     async signUp(context, payload: SignUpPayload) {
       try {
@@ -47,8 +46,8 @@ export const makeStore = (authService: AuthService, userService: UserService) =>
           accessToken: userData.idToken,
           refreshToken: userData.refreshToken,
         })
-        await context.dispatch('getUserData', userData.idToken)
-        return res
+        const userInformation = await context.dispatch('getUserData', userData.idToken)
+        return userInformation
       }
       catch (e) {
         console.log(e)
@@ -58,13 +57,20 @@ export const makeStore = (authService: AuthService, userService: UserService) =>
       const res = await userService.getData(idToken)
       const userData = res.data.users
       context.commit('setUser', userData[0])
-      return res
+      return userData[0]
     },
     setToken(context, { accessToken, refreshToken }: { accessToken: string, refreshToken: string }) {
       const accessTokenCookie = useCookie('accessToken')
       const refreshTokenCookie = useCookie('refreshToken')
       accessTokenCookie.value = accessToken
       refreshTokenCookie.value = refreshToken
+    },
+    signOut(context) {
+      const accessTokenCookie = useCookie('accessToken')
+      const refreshTokenCookie = useCookie('refreshToken')
+      accessTokenCookie.value = ''
+      refreshTokenCookie.value = ''
+      context.commit('clearUser')
     },
   },
 })
