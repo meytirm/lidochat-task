@@ -31,12 +31,7 @@ export class ServiceApi {
       (response) => {
         return response
       },
-      async (error) => {
-        if (error.response?.status === 401) {
-          const store = useStore()
-          await store.dispatch('signOut')
-          navigateTo('/sign-in')
-        }
+      (error) => {
         return Promise.reject(error)
       },
     )

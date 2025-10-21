@@ -56,7 +56,6 @@ async function signOut() {
 }
 onMounted(async () => {
   const userInformationStorage = localStorage.getItem('userInformation')
-  console.log(userInformationStorage)
   if (userInformationStorage) {
     const userInformation = JSON.parse(userInformationStorage)
     store.commit('setUser', userInformation)
