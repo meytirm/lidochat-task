@@ -1,4 +1,5 @@
 import axios, { type AxiosInstance, type AxiosRequestConfig } from 'axios'
+import { useStore } from 'vuex'
 
 export class ServiceApi {
   private readonly axiosInstance: AxiosInstance
@@ -30,7 +31,12 @@ export class ServiceApi {
       (response) => {
         return response
       },
-      (error) => {
+      async (error) => {
+        if (error.response?.status === 401) {
+          const store = useStore()
+          await store.dispatch('signOut')
+          navigateTo('/sign-in')
+        }
         return Promise.reject(error)
       },
     )
