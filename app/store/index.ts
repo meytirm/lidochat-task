@@ -35,6 +35,7 @@ export const makeStore = (authService: AuthService, userService: UserService) =>
         refreshToken: userData.refreshToken,
       })
       const userInformation = await context.dispatch('getUserData', userData.idToken)
+      context.dispatch('setExpirationTime', userData.expiresIn)
       return userInformation
     },
     async signUp(context, payload: SignUpPayload) {
@@ -47,6 +48,7 @@ export const makeStore = (authService: AuthService, userService: UserService) =>
           refreshToken: userData.refreshToken,
         })
         const userInformation = await context.dispatch('getUserData', userData.idToken)
+        context.dispatch('setExpirationTime', userData.expiresIn)
         return userInformation
       }
       catch (e) {
@@ -71,6 +73,12 @@ export const makeStore = (authService: AuthService, userService: UserService) =>
       accessTokenCookie.value = ''
       refreshTokenCookie.value = ''
       context.commit('clearUser')
+    },
+    setExpirationTime(context, expirationTime: number) {
+      const expiresInSeconds = +expirationTime
+      const expiresInMs = expiresInSeconds * 1000
+      const expirationTimeCookie = useCookie('expirationTime')
+      expirationTimeCookie.value = String(Date.now() + expiresInMs)
     },
   },
 })
