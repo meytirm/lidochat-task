@@ -1,4 +1,4 @@
-import { defineNuxtPlugin, useRuntimeConfig } from '#app'
+import { defineNuxtPlugin, useRuntimeConfig, useCookie } from '#app'
 import { ServiceApi } from '~/service/service-api'
 
 export default defineNuxtPlugin(() => {
