@@ -27,19 +27,16 @@ export const makeStore = (authService: AuthService, userService: UserService) =>
   },
   actions: {
     async signIn(context, payload: SignInPayload) {
-      try {
-        const res = await authService.signIn(payload)
-        const userData = res.data
-        const { registered, ...rest } = userData
-        context.commit('setUser', rest)
-        await context.dispatch('setToken', {
-          accessToken: userData.idToken,
-          refreshToken: userData.refreshToken,
-        })
-      }
-      catch (e) {
-        console.log(e)
-      }
+      const res = await authService.signIn(payload)
+      const userData = res.data
+      const { registered, ...rest } = userData
+      context.commit('setUser', rest)
+      await context.dispatch('setToken', {
+        accessToken: userData.idToken,
+        refreshToken: userData.refreshToken,
+      })
+      await context.dispatch('getUserData', userData.idToken)
+      return res
     },
     async signUp(context, payload: SignUpPayload) {
       try {
@@ -50,20 +47,18 @@ export const makeStore = (authService: AuthService, userService: UserService) =>
           accessToken: userData.idToken,
           refreshToken: userData.refreshToken,
         })
+        await context.dispatch('getUserData', userData.idToken)
+        return res
       }
       catch (e) {
         console.log(e)
       }
     },
     async getUserData(context, idToken: string) {
-      try {
-        const res = await userService.getData(idToken)
-        const userData = res.data.users
-        context.commit('setUser', userData[0])
-      }
-      catch (e) {
-        console.log(e)
-      }
+      const res = await userService.getData(idToken)
+      const userData = res.data.users
+      context.commit('setUser', userData[0])
+      return res
     },
     setToken(context, { accessToken, refreshToken }: { accessToken: string, refreshToken: string }) {
       const accessTokenCookie = useCookie('accessToken')
